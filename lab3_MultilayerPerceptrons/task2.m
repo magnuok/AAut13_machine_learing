@@ -1,0 +1,43 @@
+%%
+clear all:
+load regression_data.mat
+
+net = fitnet(50);
+net.layers{2}.transferFcn='purelin';
+net.trainFcn = 'trainlm';
+
+%Choose ‘mse’ as cost function and, as stopping criterion, the cost function
+%reaching a value below 0.005 or the number of iterations reaching 3000. 
+net.performFcn='mse';
+net.trainParam.show=3000; % # of epochs in display
+net.trainParam.epochs=3000;% max epochs
+net.trainParam.goal=0.005; % training goal
+%% 2.3
+%{
+net.divideFcn='divideind';
+net.divideParam.trainInd=1:85;
+net.divideParam.testInd=86:100;
+
+[net,tr] = train(net,X,T);
+% Plot obtained function
+x= -1:0.01:1;
+y= net(x);
+plot(x,y);
+% Performance sows evolution of MSE during training
+hold on
+%}
+
+%% 2.4
+net.divideFcn='divideind';
+net.divideParam.trainInd=1:70;
+net.divideParam.valInd=71:85;
+net.divideParam.testInd=86:100;
+
+[net,tr] = train(net,X,T);
+% Plot obtained function in same figure as 2.3
+x= -1:0.01:1;
+y2= net(x);
+plot(x,y2)
+legend('Without validation set','With validation set')
+% Performance shows evolution of MSE during training
+
